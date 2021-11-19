@@ -1,5 +1,5 @@
 # imports
-import pygame, sys
+import pygame, sys, random
 from pygame.locals import *
 
 pygame.init()
@@ -48,12 +48,12 @@ class Enemy(pygame.sprite.Sprite):
 
         self.image = pygame.image.load("Asteroid2.png")
         self.rect = self.image.get_rect()
-        self.rect.center = (SCREEN_WIDTH + 0.5 * self.rect.width, 100)
+        self.rect.topleft = (SCREEN_WIDTH, random.randint(0, SCREEN_HEIGHT - self.rect.height))
 
     def move(self):
         self.rect.move_ip(-5, 0)
         if self.rect.right < 0:
-            self.rect.left = SCREEN_WIDTH
+            self.rect.topleft = (SCREEN_WIDTH, random.randint(0, SCREEN_HEIGHT - self.rect.height))
 
 # create player and enemy objects
 SHIP = Ship()
