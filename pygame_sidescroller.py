@@ -46,9 +46,11 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
+        random_scale = random.randrange(10, 100, 5)
         self.image = pygame.image.load("Asteroid2.png")
+        self.image = pygame.transform.scale(self.image, (random_scale, random_scale))
         self.rect = self.image.get_rect()
-        self.rect.topleft = (SCREEN_WIDTH, random.randint(0, SCREEN_HEIGHT - self.rect.height))
+        self.rect.topleft = (random.randint(SCREEN_WIDTH, SCREEN_WIDTH + 1000) , random.randint(0, SCREEN_HEIGHT - self.rect.height))
 
     def move(self):
         self.rect.move_ip(-5, 0)
@@ -57,15 +59,22 @@ class Enemy(pygame.sprite.Sprite):
 
 # create player and enemy objects
 SHIP = Ship()
-ASTEROID = Enemy()
+# create 10 asteroids
+asteroid_list = []
+for i in range(10):
+    ASTEROID = Enemy()
+    asteroid_list.append(ASTEROID)
+
 
 # create sprite groups
-enemies = pygame.sprite.Group()
-enemies.add(ASTEROID)
 all_sprites = pygame.sprite.Group()
-all_sprites.add(SHIP)
-all_sprites.add(ASTEROID)
+enemies = pygame.sprite.Group()
 
+# add sprites to the groups
+all_sprites.add(SHIP)
+for rock in asteroid_list:
+    all_sprites.add(rock)
+    enemies.add(rock)
 
 # Loop
 while True:
