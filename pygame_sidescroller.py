@@ -1,5 +1,5 @@
 # imports
-import pygame, sys, random
+import pygame, sys, random, time
 from pygame.locals import *
 
 pygame.init()
@@ -17,6 +17,7 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 400
 BACKGROUND = pygame.image.load("background.png")
 SCORE = 0
+PAUSED = False
 
 # setting up fonts
 font = pygame.font.SysFont("Veranda", 30)
@@ -42,10 +43,10 @@ class Ship(pygame.sprite.Sprite):
 
         if self.rect.bottom < SCREEN_HEIGHT:
             if pressed_keys[K_DOWN]:
-                self.rect.move_ip(0, 5)
+                self.rect.move_ip(0, 10)
         if self.rect.top > 0:
             if pressed_keys[K_UP]:
-                self.rect.move_ip(0, -5)
+                self.rect.move_ip(0, -10)
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
@@ -77,6 +78,7 @@ all_sprites.add(SHIP)
 enemies.add(ASTEROID)
 all_sprites.add(ASTEROID)
 
+pygame.mixer.Sound('the_final_countdown.wav').play()
 # Loop
 while True:
     for event in pygame.event.get():
@@ -89,18 +91,23 @@ while True:
     DISPLAYSURF.blit(score, (10, 10))
 
     # moves and redraws all sprites
-    for entity in all_sprites:
-        entity.move()
-        DISPLAYSURF.blit(entity.image, entity.rect)
+    if PAUSED == False:
+        for entity in all_sprites:
+            entity.move()
+            DISPLAYSURF.blit(entity.image, entity.rect)
 
-    if ASTEROID.rect.right < 1:
-        new_rock = Enemy()
-        enemies.add(new_rock)
-        all_sprites.add(new_rock)
-    
-    if pygame.sprite.spritecollideany(SHIP, enemies):
-        DISPLAYSURF.fill(RED)
-        DISPLAYSURF.blit
+        if ASTEROID.rect.right < 1:
+            new_rock = Enemy()
+            enemies.add(new_rock)
+            all_sprites.add(new_rock)
+        
+        if pygame.sprite.spritecollideany(SHIP, enemies):
+            PAUSED = True
+            DISPLAYSURF.fill(RED)
+            DISPLAYSURF.blit(score, (0,0))
+            time.sleep(0.5)
+            PAUSED = False
+            
 
     pygame.display.update()
     clock.tick(FPS)
